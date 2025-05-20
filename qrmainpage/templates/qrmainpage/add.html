@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Add</title>
+    <link href="{% static 'qrmainpage/styles.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    <h1>Upload Files & generate QR Code</h1>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <p>
+        <label for="{{ form.name.id_for_label }}">{{ form.name.label }}:</label
+        ><br />
+        {{ form.name }}
+      </p>
+
+      <p>
+        <label for="{{ form.file.id_for_label }}">{{ form.file.label }}:</label
+        ><br />
+        {{ form.file }}
+      </p>
+
+      <button type="submit">Generate QR</button>
+    </form>
+    {% if qr_image %}
+    <h2>QR Code for codeitdz.com/{{ form.cleaned_data.name }}:</h2>
+    <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code" />
+    {% endif %}
+    <a href="{% url 'qrmainpage:index' %}">retourner a la page d'accueil</a>
+  </body>
+</html>
