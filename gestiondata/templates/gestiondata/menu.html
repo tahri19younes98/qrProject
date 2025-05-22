@@ -1,0 +1,64 @@
+{% extends "gestiondata/layout.html" %} {% block body %}
+<h1>Créer un Menu</h1>
+
+<input type="text" id="list_Menu" placeholder="Nom du Menu" />
+<input type="number" id="list_Price" placeholder="Prix du Menu" />
+<input type="text" id="extension" placeholder="Extension (optionnel)" />
+<select id="type_menu">
+  <option disabled selected>-- Sélectionner un type de menu --</option>
+</select>
+<select id="url">
+  <option disabled selected>-- Sélectionner une URL --</option>
+</select>
+
+<button onclick="createMenu()">Create</button>
+
+<script>
+  // Load TypeMenus and URLs
+  fetch("/gestiondata/api/typemenus_urls/")
+    .then((res) => res.json())
+    .then((data) => {
+      const typeMenuSelect = document.getElementById("type_menu");
+      data.typemenus.forEach((t) => {
+        const option = document.createElement("option");
+        option.value = t.id;
+        option.textContent = t.name;
+        typeMenuSelect.appendChild(option);
+      });
+
+      const urlSelect = document.getElementById("url");
+      data.urls.forEach((u) => {
+        const option = document.createElement("option");
+        option.value = u.id;
+        option.textContent = u.name_url;
+        urlSelect.appendChild(option);
+      });
+    });
+  function createMenu() {
+    const list_Menu = document.getElementById("list_Menu").value;
+    const list_Price = document.getElementById("list_Price").value;
+    const extension = document.getElementById("extension").value;
+    const type_menu = document.getElementById("type_menu").value;
+    const url = document.getElementById("url").value;
+
+    fetch("/gestiondata/create_menu/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}",
+      },
+      body: JSON.stringify({
+        list_Menu,
+        list_Price,
+        extension,
+        type_menu,
+        url,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }
+</script>
+{% endblock %}

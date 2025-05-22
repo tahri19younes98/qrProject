@@ -1,12 +1,13 @@
 import json
 from django.http import JsonResponse
 from django.shortcuts import render
-from gestiondata.models import Fournisseur
+from gestiondata.models import Fournisseur,Menu,Articles,TypeMenu,Url,Categorie
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
-
+#----------------------------------Fournisseur----#--------------------------------------
 
 def liste_fournisseurs(request):
     fournisseurs= Fournisseur.objects.all()
@@ -68,3 +69,110 @@ def delete_fournisseur(request, fournisseur_id):
         except Fournisseur.DoesNotExist:
             return JsonResponse({"error": "Fournisseur not found"}, status=404)
     return JsonResponse({"error": "Only DELETE allowed"}, status=405)
+
+
+
+#-------------------------------Menu-------#--------------------------------------
+
+
+@csrf_exempt
+def create_menu(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        menu = Menu.objects.create(
+            list_Menu=data["list_Menu"],
+            list_Price=data["list_Price"],
+            extension=data.get("extension"),
+            type_menu_id=data["type_menu"],
+            Url_id=data["url"]
+        )
+        return JsonResponse({"message": "Menu created", "id": menu.id})
+    return JsonResponse({"error": "Only POST allowed"}, status=405)
+
+
+def menu_page(request):
+    return render(request, "gestiondata/menu.html")
+
+
+#-------------------------------Articles-------#--------------------------------------
+
+@csrf_exempt
+def create_article(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        article = Articles.objects.create(
+            name=data["name"],
+            price=data["price"],
+            code_barre=data["code_barre"],
+            Categorie_id=data["categorie"]
+        )
+        return JsonResponse({"message": "Article created", "id": article.id})
+    return JsonResponse({"error": "Only POST allowed"}, status=405)
+
+def articles_page(request):
+    return render(request, "gestiondata/articles.html")
+
+
+
+
+#-------------------------------url-------#--------------------------------------
+
+
+@csrf_exempt
+def create_url(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        try:
+            fournisseur = Fournisseur.objects.get(id=data["four_url"])
+            url = Url.objects.create(name_url=data["name_url"], four_url=fournisseur)
+            return JsonResponse({"message": "URL créée", "id": url.id})
+        except Fournisseur.DoesNotExist:
+            return JsonResponse({"error": "Fournisseur introuvable"}, status=400)
+    return JsonResponse({"error": "Méthode non autorisée"}, status=405)
+
+def url_page(request):
+    return render(request, "gestiondata/url.html")
+
+#----------------------------------TypeMenu-------#--------------------------------------
+
+@csrf_exempt
+def create_typemenu(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        typemenu = TypeMenu.objects.create(name=data["name"])
+        return JsonResponse({"message": "TypeMenu créé", "id": typemenu.id})
+    return JsonResponse({"error": "Méthode non autorisée"}, status=405)
+
+
+
+def typemenu_page(request):
+    return render(request, "gestiondata/typemenu.html")
+
+
+
+#----------------------------------Categorie-------#--------------------------------------
+@csrf_exempt
+def create_categorie(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        cat = Categorie.objects.create(name_cat=data["name_cat"])
+        return JsonResponse({"message": "Catégorie créée", "id": cat.id})
+    return JsonResponse({"error": "Méthode non autorisée"}, status=405)
+
+def categorie_page(request):
+    return render(request, "gestiondata/categorie.html")
+
+#-----------------------------------selective ----------------------#--------------------
+def get_categories(request):
+    categories = Categorie.objects.all().values("id", "name_cat")
+    return JsonResponse(list(categories), safe=False)
+
+
+def get_fournisseurs(request):
+    fournisseurs = Fournisseur.objects.all().values("id", "name")
+    return JsonResponse(list(fournisseurs), safe=False)
+
+def get_typemenus_and_urls(request):
+    typemenus = list(TypeMenu.objects.all().values("id", "name"))
+    urls = list(Url.objects.all().values("id", "name_url"))
+    return JsonResponse({"typemenus": typemenus, "urls": urls})

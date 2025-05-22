@@ -1,0 +1,52 @@
+{% extends "gestiondata/layout.html" %} {% block body %}
+<h1>Créer une URL</h1>
+
+<input
+  type="text"
+  id="name_url"
+  placeholder="Nom de l'URL (ex: www.site.com)"
+/>
+<select id="four_url">
+  <option disabled selected>-- Sélectionner un fournisseur --</option>
+</select>
+
+<button onclick="createUrl()">Create URL</button>
+
+<script>
+  fetch("/gestiondata/api/fournisseurs/")
+    .then((res) => res.json())
+    .then((data) => {
+      const select = document.getElementById("four_url");
+      data.forEach((f) => {
+        const option = document.createElement("option");
+        option.value = f.id;
+        option.textContent = f.name;
+        select.appendChild(option);
+      });
+    })
+    .catch((err) => console.error("Failed to load fournisseurs:", err));
+
+  function createUrl() {
+    const name_url = document.getElementById("name_url").value;
+    const four_url = document.getElementById("four_url").value;
+
+    fetch("/gestiondata/create_url/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}",
+      },
+      body: JSON.stringify({
+        name_url,
+        four_url,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        alert("URL créée !");
+      })
+      .catch((error) => console.error("Erreur:", error));
+  }
+</script>
+{% endblock %}
