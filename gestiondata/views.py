@@ -81,7 +81,7 @@ def create_menu(request):
         data = json.loads(request.body)
         menu = Menu.objects.create(
             list_Menu=data["list_Menu"],
-            list_Price=data["list_Price"],
+           # list_Price=data["list_Price"],
             extension=data.get("extension"),
             type_menu_id=data["type_menu"],
             Url_id=data["url"]

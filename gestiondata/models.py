@@ -51,7 +51,7 @@ class Url(models.Model):
 
 class Menu(models.Model):
     list_Menu = models.CharField(max_length=100)
-    list_Price = models.FloatField()
+   # list_Price = models.FloatField()
     extension = models.CharField(max_length=100,null=True,blank=True)
     articles = models.ManyToManyField('Articles', through='Menu_Article')
     type_menu = models.ForeignKey('TypeMenu', on_delete=models.CASCADE)

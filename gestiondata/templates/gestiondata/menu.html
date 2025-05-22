@@ -2,7 +2,7 @@
 <h1>Créer un Menu</h1>
 
 <input type="text" id="list_Menu" placeholder="Nom du Menu" />
-<input type="number" id="list_Price" placeholder="Prix du Menu" />
+
 <input type="text" id="extension" placeholder="Extension (optionnel)" />
 <select id="type_menu">
   <option disabled selected>-- Sélectionner un type de menu --</option>
@@ -36,7 +36,7 @@
     });
   function createMenu() {
     const list_Menu = document.getElementById("list_Menu").value;
-    const list_Price = document.getElementById("list_Price").value;
+
     const extension = document.getElementById("extension").value;
     const type_menu = document.getElementById("type_menu").value;
     const url = document.getElementById("url").value;
@@ -49,7 +49,7 @@
       },
       body: JSON.stringify({
         list_Menu,
-        list_Price,
+
         extension,
         type_menu,
         url,
