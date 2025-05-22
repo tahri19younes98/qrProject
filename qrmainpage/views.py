@@ -8,6 +8,9 @@ from PIL import Image
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import ImageReader
+import json
+
+from django.http import JsonResponse
 
 
 # --- Forms (still inside views.py)
@@ -80,4 +83,7 @@ def index(request):
         'qr_image': qr_image,
         'show_add_menu': show_add_menu
     })
+
+
+
 

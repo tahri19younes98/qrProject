@@ -19,5 +19,6 @@ from django.urls import include,path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('qrmainpage/',include("qrmainpage.urls"))
+    path('qrmainpage/',include("qrmainpage.urls")),
+    path('gestiondata/',include("gestiondata.urls"))
 ]

@@ -6,4 +6,5 @@ app_name = "qrmainpage"
 urlpatterns = [
     path("",views.index,name="index"),
 
+
 ]
