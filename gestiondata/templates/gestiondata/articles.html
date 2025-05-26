@@ -10,6 +10,23 @@
 
 <button onclick="createArticle()">Créer</button>
 
+<h2>Mettre à jour un Article</h2>
+<input type="number" id="update-id" placeholder="ID de l'article à modifier" />
+<input type="text" id="update-name" placeholder="Nom de l'article" />
+<input type="number" id="update-price" placeholder="Prix" />
+<input type="number" id="update-code" placeholder="Code barre" />
+
+<!-- Dropdown for Categorie -->
+<select id="update-categorie">
+  <option disabled selected>-- Sélectionner une Catégorie --</option>
+</select>
+
+<button onclick="updateArticle()">Update Article</button>
+
+<h2>Supprimer un Article</h2>
+<input type="number" id="delete-id" placeholder="ID de l'article à supprimer" />
+<button onclick="deleteArticle()">Delete Article</button>
+
 <script>
   fetch("/gestiondata/api/categories/")
     .then((res) => res.json())
@@ -23,6 +40,19 @@
       });
     })
     .catch((err) => console.error("Erreur de chargement des catégories:", err));
+
+  fetch("/gestiondata/api/categories/")
+    .then((res) => res.json())
+    .then((data) => {
+      const select = document.getElementById("update-categorie");
+      data.forEach((cat) => {
+        const option = document.createElement("option");
+        option.value = cat.id;
+        option.textContent = cat.name_cat;
+        select.appendChild(option);
+      });
+    });
+
   function createArticle() {
     const name = document.getElementById("name").value;
     const price = document.getElementById("price").value;
@@ -44,6 +74,50 @@
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
+      });
+  }
+
+  function updateArticle() {
+    const id = document.getElementById("update-id").value;
+    const name = document.getElementById("update-name").value;
+    const price = document.getElementById("update-price").value;
+    const code_barre = document.getElementById("update-code").value;
+    const categorie = document.getElementById("update-categorie").value;
+
+    fetch(`/gestiondata/update_article/${id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}",
+      },
+      body: JSON.stringify({
+        name,
+        price,
+        code_barre,
+        categorie,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        alert("Article mis à jour !");
+        console.log(data);
+      });
+  }
+
+  function deleteArticle() {
+    const id = document.getElementById("delete-id").value;
+
+    fetch(`/gestiondata/delete_article/${id}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        alert("Article supprimé !");
         console.log(data);
       });
   }

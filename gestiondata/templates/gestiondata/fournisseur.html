@@ -37,35 +37,26 @@
 <a href="fournisseurs/">Afficher la liste</a>
 <script>
   function createFournisseur() {
-    const name = document.getElementById("name").value;
-    const localisation = document.getElementById("localisation").value;
-    const address = document.getElementById("address").value;
-    const type = document.getElementById("type").value;
-    const domaine = document.getElementById("domaine").value;
-    const phone = document.getElementById("phone").value;
-    const email = document.getElementById("email").value;
-    const art = document.getElementById("art").value;
-    const nis = document.getElementById("nis").value;
-    const nif = document.getElementById("nif").value;
+    const data = {
+      name: document.getElementById("name").value,
+      localisation: document.getElementById("localisation").value,
+      address: document.getElementById("address").value,
+      type: document.getElementById("type").value,
+      domaine: document.getElementById("domaine").value,
+      phone: document.getElementById("phone").value,
+      email: document.getElementById("email").value,
+      art: document.getElementById("art").value,
+      nis: document.getElementById("nis").value,
+      nif: document.getElementById("nif").value,
+    };
 
-    fetch("/gestiondata/create/", {
+    fetch("/gestiondata/api/fournisseurs/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": "{{ csrf_token }}",
       },
-      body: JSON.stringify({
-        name,
-        localisation,
-        address,
-        type,
-        domaine,
-        phone,
-        email,
-        art,
-        nis,
-        nif,
-      }),
+      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -75,35 +66,26 @@
 
   function updateFournisseur() {
     const id = document.getElementById("update-id").value;
-    const name = document.getElementById("update-name").value;
-    const localisation = document.getElementById("update-localisation").value;
-    const address = document.getElementById("update-address").value;
-    const type = document.getElementById("update-type").value;
-    const domaine = document.getElementById("update-domaine").value;
-    const phone = document.getElementById("update-phone").value;
-    const email = document.getElementById("update-email").value;
-    const art = document.getElementById("update-art").value;
-    const nis = document.getElementById("update-nis").value;
-    const nif = document.getElementById("update-nif").value;
+    const data = {
+      name: document.getElementById("update-name").value,
+      localisation: document.getElementById("update-localisation").value,
+      address: document.getElementById("update-address").value,
+      type: document.getElementById("update-type").value,
+      domaine: document.getElementById("update-domaine").value,
+      phone: document.getElementById("update-phone").value,
+      email: document.getElementById("update-email").value,
+      art: document.getElementById("update-art").value,
+      nis: document.getElementById("update-nis").value,
+      nif: document.getElementById("update-nif").value,
+    };
 
-    fetch(`/gestiondata/update/${id}/`, {
+    fetch(`/gestiondata/api/fournisseurs/${id}/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": "{{ csrf_token }}",
       },
-      body: JSON.stringify({
-        name,
-        localisation,
-        address,
-        type,
-        domaine,
-        phone,
-        email,
-        art,
-        nis,
-        nif,
-      }),
+      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -114,16 +96,34 @@
   function deleteFournisseur() {
     const id = document.getElementById("delete-id").value;
 
-    fetch(`/gestiondata/delete/${id}/`, {
+    if (!id) {
+      alert("Please enter a valid ID", true);
+      return;
+    }
+
+    fetch(`/gestiondata/api/fournisseurs/${id}/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": "{{ csrf_token }}",
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 204) {
+          // Handle no-content response
+          alert("Fournisseur deleted successfully!");
+          return { message: "Deleted successfully" };
+        }
+        return response.json(); // Only parse JSON if there's content
+      })
       .then((data) => {
-        console.log(data);
+        if (data && data.message) {
+          alert(data.message);
+        }
+      })
+      .catch((error) => {
+        alert("Error deleting fournisseur: " + error.message, true);
+        console.error("Delete error:", error);
       });
   }
 </script>
